@@ -1,43 +1,30 @@
-let items = [];
+/* ===========================================================
+   ADD PAGE SCRIPT (index.html)
 
-const form = document.getElementById("item-form");
-const nameInput = document.getElementById("name");
-const qtyInput = document.getElementById("qty");
+   This page only adds items. The List page (list.html) is a
+   real, separate page — clicking the nav link reloads the
+   browser. A plain JS array in memory can't survive a page
+   reload, so we use localStorage (the browser's built-in
+   key/value storage) purely to carry items from this page
+   over to list.html.
+   =========================================================== */
+
+const STORAGE_KEY = "item-tracker-items";
+
+const form       = document.getElementById("item-form");
+const nameInput  = document.getElementById("name");
+const qtyInput   = document.getElementById("qty");
 const priceInput = document.getElementById("price");
-const errorEl = document.getElementById("form-error");
-const rowsEl = document.getElementById("item-rows");
-const grandTotalEl = document.getElementById("grand-total");
-function formatMoney(amount) {
-  return "$" + amount.toFixed(2);
-}
+const errorEl    = document.getElementById("form-error");
+const successEl  = document.getElementById("form-success");
 
-function render() {
-  if (items.length === 0) {
-    rowsEl.innerHTML = '<tr><td colspan="5">No items yet.</td></tr>';
-  } else {
-    let html = "";
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      const lineTotal = item.qty * item.price;
-      html += `<tr>
-        <td>${item.name}</td>
-        <td class="num">${item.qty}</td>
-        <td class="num">${formatMoney(item.price)}</td>
-        <td class="num">${formatMoney(lineTotal)}</td>
-        <td class="num"><button class="del-btn" data-index="${i}">&times;</button></td>
-      </tr>`;
-    }
-    rowsEl.innerHTML = html;
-  }
 
-  let total = 0;
-  for (let i = 0; i < items.length; i++) {
-    total += items[i].qty * items[i].price;
-  }
-  grandTotalEl.textContent = formatMoney(total);
-}
+/* ===========================================================
+   Validation helpers — unchanged from before. HTML validation
+   is still off (novalidate, type="text" everywhere), so these
+   checks are still hand-written.
+   =========================================================== */
 
-render();
 function isNonEmpty(value) {
   return value.trim().length > 0;
 }
@@ -46,7 +33,8 @@ function isPositiveWholeNumber(value) {
   const trimmed = value.trim();
   if (trimmed.length === 0) return false;
   for (let i = 0; i < trimmed.length; i++) {
-    if (trimmed[i] < "0" || trimmed[i] > "9") return false;
+    const char = trimmed[i];
+    if (char < "0" || char > "9") return false;
   }
   return Number(trimmed) > 0;
 }
@@ -54,18 +42,47 @@ function isPositiveWholeNumber(value) {
 function isPositiveOrZeroNumber(value) {
   const trimmed = value.trim();
   if (trimmed.length === 0) return false;
-  let dots = 0;
+
+  let dotCount = 0;
   for (let i = 0; i < trimmed.length; i++) {
-    const c = trimmed[i];
-    if (c === ".") { dots++; if (dots > 1) return false; }
-    else if (c < "0" || c > "9") return false;
+    const char = trimmed[i];
+    if (char === ".") {
+      dotCount++;
+      if (dotCount > 1) return false;
+    } else if (char < "0" || char > "9") {
+      return false;
+    }
   }
   return Number(trimmed) >= 0;
 }
 
+
+/* ===========================================================
+   localStorage helpers. loadItems reads the array that's
+   already saved (or an empty array the very first time).
+   saveItems writes the whole array back as a JSON string,
+   since localStorage only stores text.
+   =========================================================== */
+
+function loadItems() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+
+function saveItems(items) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+
+/* ===========================================================
+   Form submit: validate, then load the existing list, add the
+   new item, and save it straight back.
+   =========================================================== */
+
 form.addEventListener("submit", function (e) {
   e.preventDefault();
   errorEl.textContent = "";
+  successEl.textContent = "";
 
   const name = nameInput.value;
   const qty = qtyInput.value;
@@ -76,22 +93,23 @@ form.addEventListener("submit", function (e) {
     return;
   }
   if (!isPositiveWholeNumber(qty)) {
-    errorEl.textContent = "Quantity must be a whole number greater than 0.";
+    errorEl.textContent = "Quantity must be a whole number greater than 0 (e.g. 1, 2, 10).";
     return;
   }
   if (!isPositiveOrZeroNumber(price)) {
-    errorEl.textContent = "Price must be 0 or greater.";
+    errorEl.textContent = "Price must be a number 0 or greater (e.g. 0, 9.99).";
     return;
   }
 
-  items.push({ name: name.trim(), qty: Number(qty), price: Number(price) });
+  const items = loadItems();
+  items.push({
+    name: name.trim(),
+    qty: Number(qty.trim()),
+    price: Number(price.trim())
+  });
+  saveItems(items);
+
   form.reset();
-  render();
-});
-rowsEl.addEventListener("click", function (e) {
-  const button = e.target.closest(".del-btn");
-  if (!button) return;
-  const index = Number(button.dataset.index);
-  items.splice(index, 1);
-  render();
+  nameInput.focus();
+  successEl.textContent = `"${name.trim()}" added — view it on the Items page.`;
 });

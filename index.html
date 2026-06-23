@@ -2,58 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Item Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item Tracker — Add Item</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
- <div class="container">
-  <header class="app-header">
-    <h1>Item Tracker</h1>
-    <p class="subtitle">Add items below.</p>
-  </header>
 
-  <section class="card">
-    <h2>Add an item</h2>
-    <form id="item-form" novalidate>
-      <div class="field">
-        <label for="name">Item name</label>
-        <input type="text" id="name" placeholder="e.g. Notebook">
-      </div>
-      <div class="field">
-        <label for="qty">Quantity</label>
-        <input type="text" id="qty" placeholder="e.g. 3">
-      </div>
-      <div class="field">
-        <label for="price">Price (each)</label>
-        <input type="text" id="price" placeholder="e.g. 12.50">
-      </div>
-      <button type="submit">Add item</button>
-      <p class="error" id="form-error"></p>
-    </form>
-  </section>
-  <section class="card">
-    <h2>Items</h2>
-    <table id="item-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th class="num">Qty</th>
-          <th class="num">Price</th>
-          <th class="num">Total</th>
-          <th class="num"></th>
-        </tr>
-      </thead>
-      <tbody id="item-rows"></tbody>
-      <tfoot>
-        <tr>
-          <td colspan="3">Grand total</td>
-          <td class="num" id="grand-total">$0.00</td>
-          <td></td>
-        </tr>
-      </tfoot>
-    </table>
-  </section>
-</div>
-<script src="script.js"></script>
+  <div class="container">
+
+    <header class="app-header">
+      <h1>Item Tracker</h1>
+      <p class="subtitle">Add an item here, then check the Items page to see your list and totals.</p>
+      <nav class="page-nav">
+        <span class="page-nav-current">Add item</span>
+        <a href="list.html">View items &rarr;</a>
+      </nav>
+    </header>
+
+    <!--
+      novalidate turns OFF the browser's automatic form validation.
+      We are NOT using required / type="number" / min / max anywhere.
+      All checking happens ourselves, in script.js.
+    -->
+    <section class="card">
+      <h2>Add an item</h2>
+      <form id="item-form" novalidate>
+
+        <div class="field">
+          <label for="name">Item name</label>
+          <input type="text" id="name" placeholder="e.g. Notebook">
+        </div>
+
+        <div class="field">
+          <label for="qty">Quantity</label>
+          <input type="text" id="qty" placeholder="e.g. 3">
+        </div>
+
+        <div class="field">
+          <label for="price">Price (each)</label>
+          <input type="text" id="price" placeholder="e.g. 12.50">
+        </div>
+
+        <button type="submit">Add item</button>
+
+        <p class="error" id="form-error"></p>
+        <p class="success" id="form-success"></p>
+      </form>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
