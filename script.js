@@ -11,12 +11,13 @@
 
 const STORAGE_KEY = "item-tracker-items";
 
-const form       = document.getElementById("item-form");
-const nameInput  = document.getElementById("name");
-const qtyInput   = document.getElementById("qty");
-const priceInput = document.getElementById("price");
-const errorEl    = document.getElementById("form-error");
-const successEl  = document.getElementById("form-success");
+const form          = document.getElementById("item-form");
+const nameInput     = document.getElementById("name");
+const categoryInput = document.getElementById("category");
+const qtyInput      = document.getElementById("qty");
+const priceInput    = document.getElementById("price");
+const errorEl       = document.getElementById("form-error");
+const successEl     = document.getElementById("form-success");
 
 
 /* ===========================================================
@@ -85,11 +86,16 @@ form.addEventListener("submit", function (e) {
   successEl.textContent = "";
 
   const name = nameInput.value;
+  const category = categoryInput.value;
   const qty = qtyInput.value;
   const price = priceInput.value;
 
   if (!isNonEmpty(name)) {
     errorEl.textContent = "Please enter an item name.";
+    return;
+  }
+  if (!isNonEmpty(category)) {
+    errorEl.textContent = "Please select a category.";
     return;
   }
   if (!isPositiveWholeNumber(qty)) {
@@ -104,6 +110,7 @@ form.addEventListener("submit", function (e) {
   const items = loadItems();
   items.push({
     name: name.trim(),
+    category: category,
     qty: Number(qty.trim()),
     price: Number(price.trim())
   });
@@ -111,5 +118,6 @@ form.addEventListener("submit", function (e) {
 
   form.reset();
   nameInput.focus();
+  // form.reset() also clears the select back to "-- Select --"
   successEl.textContent = `"${name.trim()}" added — view it on the Items page.`;
 });

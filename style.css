@@ -99,7 +99,7 @@ body {
 
 #item-form {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
   gap: 14px;
   align-items: end;
 }
@@ -117,7 +117,8 @@ label {
   color: var(--ink-soft);
 }
 
-input {
+input,
+select {
   font-family: "JetBrains Mono", "Courier New", monospace;
   font-size: 0.95rem;
   padding: 10px 12px;
@@ -127,7 +128,8 @@ input {
   color: var(--ink);
 }
 
-input:focus {
+input:focus,
+select:focus {
   outline: 2px solid var(--teal);
   outline-offset: 1px;
   border-color: var(--teal);
@@ -259,4 +261,18 @@ tfoot td {
   #item-form button[type="submit"] {
     grid-column: 1 / -1;
   }
+}
+
+/* ===========================================================
+   7. CATEGORY BADGE (list table)
+   =========================================================== */
+
+.category-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--teal-dark);
 }

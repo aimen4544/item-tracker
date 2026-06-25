@@ -35,15 +35,17 @@ function render() {
 
   if (items.length === 0) {
     rowsEl.innerHTML =
-      '<tr class="empty-row"><td colspan="5">No items yet — add one on the Add page.</td></tr>';
+      '<tr class="empty-row"><td colspan="6">No items yet — add one on the Add page.</td></tr>';
   } else {
     let html = "";
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       const lineTotal = item.qty * item.price;
+      const category = item.category || "Other"; // older items saved before category existed
 
       html += "<tr>";
       html += `<td class="name-cell">${escapeForDisplay(item.name)}</td>`;
+      html += `<td><span class="category-badge">${escapeForDisplay(category)}</span></td>`;
       html += `<td class="num">${item.qty}</td>`;
       html += `<td class="num">${formatMoney(item.price)}</td>`;
       html += `<td class="num">${formatMoney(lineTotal)}</td>`;
